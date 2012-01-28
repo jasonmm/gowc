@@ -25,7 +25,6 @@
 */
 package main
 
-
 import (
 	"bufio"
 	"flag"
@@ -34,18 +33,15 @@ import (
 	"os"
 )
 
-
 var (
 	wordFlag = flag.Bool("w", false, "count words")
 	charFlag = flag.Bool("c", false, "count characters")
 	lineFlag = flag.Bool("l", false, "count lines")
 )
 
-
 type metrics struct {
 	nline, nword, nchar int
 }
-
 
 func (m metrics) String() string {
 	s := ""
@@ -61,13 +57,11 @@ func (m metrics) String() string {
 	return s
 }
 
-
 func (lhs *metrics) Add(rhs *metrics) {
 	lhs.nline += rhs.nline
 	lhs.nword += rhs.nword
 	lhs.nchar += rhs.nchar
 }
-
 
 func main() {
 	parseFlags()
@@ -78,7 +72,6 @@ func main() {
 	}
 }
 
-
 func parseFlags() {
 	flag.Parse()
 	if !*wordFlag && !*lineFlag && !*charFlag {
@@ -87,7 +80,6 @@ func parseFlags() {
 		*charFlag = true
 	}
 }
-
 
 func processFiles(paths []string) {
 	var total metrics
@@ -102,11 +94,10 @@ func processFiles(paths []string) {
 	}
 }
 
-
 func processSingleFile(path string) metrics {
-	rd, err := os.Open(path, os.O_RDONLY, 0)
+	rd, err := os.Open(path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "open error: %s: %s\n", path, err.String())
+		fmt.Fprintf(os.Stderr, "open error: %s: %s\n", path, err.Error())
 		os.Exit(1)
 	}
 	defer rd.Close()
@@ -114,13 +105,11 @@ func processSingleFile(path string) metrics {
 	return m
 }
 
-
 func processReader(rd io.Reader, name string) metrics {
 	m := countAll(rd)
 	fmt.Printf("%v\t%s\n", m, name)
 	return m
 }
-
 
 func countAll(rd io.Reader) metrics {
 	brd := bufio.NewReader(rd)
@@ -129,8 +118,8 @@ func countAll(rd io.Reader) metrics {
 
 	for {
 		s, err := brd.ReadString('\n')
-		if err != nil && err != os.EOF {
-			fmt.Fprintf(os.Stderr, "read error: %s\n", err.String())
+		if err != nil && err != io.EOF {
+			fmt.Fprintf(os.Stderr, "read error: %s\n", err.Error())
 			os.Exit(1)
 		}
 		if len(s) == 0 {
@@ -145,7 +134,6 @@ func countAll(rd io.Reader) metrics {
 
 	return m
 }
-
 
 func countWords(s string) int {
 	wasspace := true
