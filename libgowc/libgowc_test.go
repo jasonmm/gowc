@@ -3,7 +3,7 @@ package libgowc
 import "testing"
 
 func TestProcessSingleFile(t *testing.T) {
-	var m metrics
+	var m Metrics
 	var e error
 
 	if m, e = ProcessSingleFile("test-file.txt"); e != nil {

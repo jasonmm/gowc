@@ -6,18 +6,18 @@ import (
 	"os"
 )
 
-type metrics struct {
+type Metrics struct {
 	nline, nword, nchar int
 }
 
-func (lhs *metrics) Add(rhs *metrics) {
+func (lhs *Metrics) Add(rhs *Metrics) {
 	lhs.nline += rhs.nline
 	lhs.nword += rhs.nword
 	lhs.nchar += rhs.nchar
 }
 
 func ProcessFiles(paths []string) {
-	var total metrics
+	var total Metrics
 
 	for _, p := range paths {
 		m, _ := ProcessSingleFile(p)
@@ -25,8 +25,8 @@ func ProcessFiles(paths []string) {
 	}
 }
 
-func ProcessSingleFile(path string) (m_ret metrics, e error) {
-	var m metrics
+func ProcessSingleFile(path string) (m_ret Metrics, e error) {
+	var m Metrics
 
 	rd, err := os.Open(path)
 	if err != nil {
@@ -37,15 +37,15 @@ func ProcessSingleFile(path string) (m_ret metrics, e error) {
 	return m, nil
 }
 
-func processReader(rd io.Reader, name string) metrics {
+func processReader(rd io.Reader, name string) Metrics {
 	m, _ := countAll(rd)
 	return m
 }
 
-func countAll(rd io.Reader) (m_ret metrics, e error) {
+func countAll(rd io.Reader) (m_ret Metrics, e error) {
 	brd := bufio.NewReader(rd)
 
-	var m metrics
+	var m Metrics
 
 	for {
 		s, err := brd.ReadString('\n')
