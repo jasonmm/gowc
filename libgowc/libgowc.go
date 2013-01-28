@@ -7,13 +7,13 @@ import (
 )
 
 type Metrics struct {
-	nline, nword, nchar int
+	Lines, Words, Chars int
 }
 
 func (lhs *Metrics) Add(rhs *Metrics) {
-	lhs.nline += rhs.nline
-	lhs.nword += rhs.nword
-	lhs.nchar += rhs.nchar
+	lhs.Lines += rhs.Lines
+	lhs.Words += rhs.Words
+	lhs.Chars += rhs.Chars
 }
 
 func ProcessFiles(paths []string) {
@@ -56,9 +56,9 @@ func countAll(rd io.Reader) (m_ret Metrics, e error) {
 			break
 		}
 
-		m.nline++
-		m.nchar += len(s)
-		m.nword += countWords(s)
+		m.Lines++
+		m.Chars += len(s)
+		m.Words += countWords(s)
 
 	}
 
