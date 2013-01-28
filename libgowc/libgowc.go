@@ -1,3 +1,4 @@
+// A wc(1)-clone library for Go.
 package libgowc
 
 import (
@@ -6,25 +7,34 @@ import (
 	"os"
 )
 
+// Structure to hold the number of lines, words, and characters found in 
+// each file(s).
 type Metrics struct {
 	Lines, Words, Chars int
 }
 
+// Adds the passed in metrics to the lhs metrics.
 func (lhs *Metrics) Add(rhs *Metrics) {
 	lhs.Lines += rhs.Lines
 	lhs.Words += rhs.Words
 	lhs.Chars += rhs.Chars
 }
 
-func ProcessFiles(paths []string) {
+// Processes a array of file names returning the total counts for all the
+// files combined.  Calls ProcessSingleFile() on each filename.
+func ProcessFiles(paths []string) Metrics {
 	var total Metrics
 
 	for _, p := range paths {
 		m, _ := ProcessSingleFile(p)
 		total.Add(&m)
 	}
+
+	return total
 }
 
+// Processes a single file given as a filename and returns the number of 
+// lines, words, and characters in that file.
 func ProcessSingleFile(path string) (m_ret Metrics, e error) {
 	var m Metrics
 
