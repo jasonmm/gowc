@@ -1,4 +1,4 @@
-// A wc(1)-clone library for Go.
+// Package libgowc is a wc(1)-clone library for Go.
 package libgowc
 
 import (
@@ -7,21 +7,21 @@ import (
 	"os"
 )
 
-// Structure to hold the number of lines, words, and characters found in 
-// each file(s).
+// Metrics holds the number of lines, words, and characters found in each file(s).
 type Metrics struct {
 	Lines, Words, Chars int
 }
 
-// Adds the passed in metrics to the lhs metrics.
+// Add adds the passed in metrics to the existing metrics already stored by
+// the object.
 func (lhs *Metrics) Add(rhs *Metrics) {
 	lhs.Lines += rhs.Lines
 	lhs.Words += rhs.Words
 	lhs.Chars += rhs.Chars
 }
 
-// Processes a array of file names returning the total counts for all the
-// files combined.  Calls ProcessSingleFile() on each filename.
+// ProcessFiles processes an array of file names returning the total counts
+// for all the files combined.  Calls ProcessSingleFile() on each filename.
 func ProcessFiles(paths []string) Metrics {
 	var total Metrics
 
@@ -33,9 +33,9 @@ func ProcessFiles(paths []string) Metrics {
 	return total
 }
 
-// Processes a single file given as a filename and returns the number of 
-// lines, words, and characters in that file.
-func ProcessSingleFile(path string) (m_ret Metrics, e error) {
+// ProcessSingleFile processes a single file given as a filename and returns
+// the number of lines, words, and characters in that file.
+func ProcessSingleFile(path string) (Metrics, error) {
 	var m Metrics
 
 	rd, err := os.Open(path)
@@ -43,16 +43,21 @@ func ProcessSingleFile(path string) (m_ret Metrics, e error) {
 		return m, err
 	}
 	defer rd.Close()
-	m = processReader(rd, path)
+	m = processReader(rd)
+
 	return m, nil
 }
 
-func processReader(rd io.Reader, name string) Metrics {
+// processReader process the given Reader.
+func processReader(rd io.Reader) Metrics {
 	m, _ := countAll(rd)
+
 	return m
 }
 
-func countAll(rd io.Reader) (m_ret Metrics, e error) {
+// countAll counts the number of lines, characters, and words from the
+// given Reader.
+func countAll(rd io.Reader) (Metrics, error) {
 	brd := bufio.NewReader(rd)
 
 	var m Metrics
@@ -60,7 +65,7 @@ func countAll(rd io.Reader) (m_ret Metrics, e error) {
 	for {
 		s, err := brd.ReadString('\n')
 		if err != nil && err != io.EOF {
-			return m, e
+			return m, err
 		}
 		if len(s) == 0 {
 			break
@@ -69,23 +74,24 @@ func countAll(rd io.Reader) (m_ret Metrics, e error) {
 		m.Lines++
 		m.Chars += len(s)
 		m.Words += countWords(s)
-
 	}
 
 	return m, nil
 }
 
+// countWords counts the number of words in the given string.  It is used by
+// the countAll() function.
 func countWords(s string) int {
-	wasspace := true
+	wasSpace := true
 	n := 0
 	for _, ch := range s {
 		if ch != ' ' && ch != '\t' && ch != '\n' {
-			if wasspace {
+			if wasSpace {
 				n++
 			}
-			wasspace = false
+			wasSpace = false
 		} else {
-			wasspace = true
+			wasSpace = true
 		}
 	}
 
