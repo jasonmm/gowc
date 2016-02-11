@@ -20,9 +20,7 @@
  * THE SOFTWARE.
  */
 
-/*
-   wc(1) clone
-*/
+// wc(1) clone
 package main
 
 import (
@@ -57,10 +55,10 @@ func (m metrics) String() string {
 	return s
 }
 
-func (lhs *metrics) Add(rhs *metrics) {
-	lhs.nline += rhs.nline
-	lhs.nword += rhs.nword
-	lhs.nchar += rhs.nchar
+func (m *metrics) Add(rhs *metrics) {
+	m.nline += rhs.nline
+	m.nword += rhs.nword
+	m.nchar += rhs.nchar
 }
 
 func main() {
